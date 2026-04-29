@@ -135,6 +135,7 @@ def count_body_chars(html_string: str) -> int:
 # ── Clean HTML Extraction ───────────────────────────────────────────
 
 class CleanHTMLExtractor(HTMLParser):
+    """KEEP <ruby> AND <rt> intact so furigana is preserved in CSV text_read."""
     def __init__(self):
         super().__init__()
         self.result: list[str] = []
@@ -148,7 +149,7 @@ class CleanHTMLExtractor(HTMLParser):
             return
         if not self.in_body or self.body_done:
             return
-        if tag in ("style", "script", "rt"):
+        if tag in ("style", "script"):
             self.skip_depth += 1
             return
         if self.skip_depth > 0:
@@ -158,7 +159,7 @@ class CleanHTMLExtractor(HTMLParser):
     def handle_startendtag(self, tag, attrs):
         if not self.in_body or self.body_done or self.skip_depth > 0:
             return
-        if tag in ("style", "script", "rt"):
+        if tag in ("style", "script"):
             return
         self.result.append(f"<{tag}>")
 
@@ -168,7 +169,7 @@ class CleanHTMLExtractor(HTMLParser):
             return
         if not self.in_body or self.body_done:
             return
-        if tag in ("style", "script", "rt"):
+        if tag in ("style", "script"):
             self.skip_depth -= 1
             return
         if self.skip_depth > 0:
@@ -219,6 +220,26 @@ def classify_char_count(level: str | None, chars: int) -> str:
     return "OK"
 
 
+RUBY_BLOCK = re.compile(r"<ruby[^>]*>(.*?)</ruby>", re.DOTALL)
+RT_INNER = re.compile(r"<rt[^>]*>([^<]*)</rt>")
+
+
+def check_ruby_rt(html: str) -> list[str]:
+    """Find <ruby>...</ruby> tags missing <rt> OR with empty/whitespace-only <rt>.
+    Returns list of broken snippets (e.g. '<ruby>諦</ruby>' or '<ruby>諦<rt></rt></ruby>').
+    Without non-empty <rt>, browser CANNOT render furigana."""
+    broken = []
+    for m in RUBY_BLOCK.finditer(html):
+        full = m.group(0)
+        inner = m.group(1)
+        rt_contents = RT_INNER.findall(inner)
+        if not rt_contents:
+            broken.append(full)
+        elif not any(rt.strip() for rt in rt_contents):
+            broken.append(full)
+    return broken
+
+
 def validate_file(html_path: str) -> dict:
     with open(html_path, "r", encoding="utf-8") as f:
         html = f.read()
@@ -226,12 +247,14 @@ def validate_file(html_path: str) -> dict:
     chars = count_body_chars(html)
     status = classify_char_count(level, chars)
     target = TARGET_RANGE.get(level) if level else None
+    broken_ruby = check_ruby_rt(html)
     return {
         "file": html_path,
         "name": name,
         "level": level,
         "chars": chars,
         "target": target,
+        "broken_ruby": broken_ruby,
         "status": status,
     }
 
@@ -438,12 +461,30 @@ def cmd_count(files: list[str]) -> int:
     return 1 if any_hard_reject else 0
 
 
-def cmd_validate(files: list[str]) -> int:
+def check_csv_ruby(csv_path: str) -> list[tuple[str, list[str]]]:
+    """Scan CSV text_read column for broken ruby (missing/empty <rt>).
+    Returns list of (row_id, broken_snippets). If non-empty, CSV needs --refresh."""
+    bad_rows = []
+    if not Path(csv_path).exists():
+        return bad_rows
+    with open(csv_path, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            text = row.get("text_read", "")
+            broken = check_ruby_rt(text)
+            if broken:
+                bad_rows.append((row.get("_id", "?"), broken))
+    return bad_rows
+
+
+def cmd_validate(files: list[str], csv_path: str | None = None) -> int:
     print(f"Validating {len(files)} file(s)...\n")
     fails = 0
     for f in files:
         info = validate_file(f)
-        ok = info["status"] == "OK"
+        ok_chars = info["status"] == "OK"
+        ok_ruby = not info["broken_ruby"]
+        ok = ok_chars and ok_ruby
         status = info["status"]
         if status == "HARD_REJECT":
             badge = "🚫"
@@ -455,9 +496,24 @@ def cmd_validate(files: list[str]) -> int:
             badge = "✅"
         tgt = f"target {info['target'][0]}-{info['target'][1]}" if info["target"] else "target ?"
         print(f"  {badge} {info['name']}: {info['chars']} chars [{info['level']}] {tgt} — {status}")
+        if info["broken_ruby"]:
+            print(f"     🚫 BROKEN RUBY ({len(info['broken_ruby'])}): {info['broken_ruby'][0][:60]}")
+            for br in info["broken_ruby"][1:5]:
+                print(f"                       {br[:60]}")
         if not ok:
             fails += 1
     print(f"\n{len(files) - fails}/{len(files)} files OK.")
+    if csv_path:
+        bad_rows = check_csv_ruby(csv_path)
+        if bad_rows:
+            print(f"\n🚫 CSV {csv_path} có {len(bad_rows)} row với broken ruby trong cột text_read:")
+            for rid, broken in bad_rows[:20]:
+                print(f"   - {rid}: {broken[0][:60]}{' ...' if len(broken) > 1 else ''}")
+            print(f"\n⚠️  CSV chưa sync với HTML đã sửa. CHẠY NGAY:")
+            print(f"   python3 process_html.py --refresh --html-dir <html-dir> --csv {csv_path}")
+            fails += len(bad_rows)
+        else:
+            print(f"\n✅ CSV {csv_path}: 0 row với broken ruby (text_read OK).")
     return 1 if fails else 0
 
 
@@ -569,7 +625,7 @@ def main():
     if args.count_only:
         sys.exit(cmd_count(files))
     if args.validate:
-        sys.exit(cmd_validate(files))
+        sys.exit(cmd_validate(files, csv_path=args.csv))
     if args.refresh:
         cmd_refresh(files, args.csv)
         return
