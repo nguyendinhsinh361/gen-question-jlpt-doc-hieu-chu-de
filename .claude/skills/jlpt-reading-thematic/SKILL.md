@@ -83,16 +83,16 @@ description: >
 
 ## BƯỚC 0: CHUẨN BỊ (1 lần cho batch)
 
-1. **Đọc rules**: `rules/content.md` + `rules/vocabulary.md` + `rules/technical.md` + `rules/questions.md`
-2. **Đọc `rules/jlpt_kanji.csv`** — dùng để tra level từng kanji khi quyết định furigana
-3. **Scan `sheets/samples_v1.csv` và `data/doc_hieu_chu_de_n{1,2}_clean.json`** — xem format, topic đã dùng → chọn format chưa/ít dùng
-4. **Load 2-3 sample calibrate style**:
+1. **Đọc `rules/rule_doc_hieu.md`** — **rule chung của giáo viên tiếng Nhật cho TOÀN BỘ phần đọc hiểu** (source-of-truth cho từ vựng/ngữ pháp theo level, kỹ thuật ra câu hỏi, distractor traps). Section 3-5 áp dụng trực tiếp. Section 1-2 (chủ đề + form) chủ yếu cho "tìm thông tin" — tham khảo tinh thần, áp dụng linh hoạt cho prose reading.
+2. **Đọc rules skill**: `rules/content.md` + `rules/vocabulary.md` + `rules/technical.md` + `rules/questions.md`
+3. **Đọc `rules/jlpt_kanji.csv`** — dùng để tra level từng kanji khi quyết định furigana
+4. **Scan `sheets/samples_v1.csv` và `data/doc_hieu_chu_de_n{1,2}_clean.json`** — xem format, topic đã dùng → chọn format chưa/ít dùng
+5. **Load 2-3 sample calibrate style**:
    ```bash
    python3 .claude/skills/jlpt-reading-thematic/scripts/load_references.py --level N1 --count 2
    python3 .claude/skills/jlpt-reading-thematic/scripts/load_references.py --level N2 --count 2
    ```
-5. **Đọc `rules/topic.json`** — chọn tag **tiếng Việt** (đa dạng ≥ 2 category trong batch > 3 bài)
-6. **Lập kế hoạch batch**: mỗi bài gán format + topic + combo question_label khác nhau theo distribution của level
+6. **Lập kế hoạch batch**: mỗi bài gán format + topic + combo question_label khác nhau theo distribution của level. Topic chọn **tiếng Anh** từ cột `en` của `rules/topic.json` (đa dạng ≥ 2 category trong batch > 3 bài).
 
 ---
 
@@ -105,7 +105,7 @@ description: >
 
 1. **Gen `_id`** = `{LEVEL}_{uuid.uuid4().hex}` (full 32-char hex). Level ∈ {N1, N2}.
 2. **Chọn format** từ R7 (`rules/content.md`) — 4 formats: xã luận cao cấp / tiểu luận triết học (N1), xã luận trung cấp / tiểu luận cá nhân (N2).
-3. **Chọn `tag`** (topic) từ `rules/topic.json` — **tiếng Việt**, đa dạng trong batch
+3. **Chọn `tag`** (topic) — **tiếng Anh** từ cột `en` của `rules/topic.json`, đa dạng trong batch
 4. **Chọn combo `question_label`** theo level (R5):
    - **N1** (3 câu): Combo 1 `reference(①) + reason + author_opinion` (phổ biến nhất)
    - **N1** khác: Combo 2 `meaning(①) + reason + author_opinion` | Combo 3 `reference(①) + reference(②) + author_opinion` | Combo 4 `reference(①) + reason + content_match`
@@ -432,4 +432,4 @@ Chi tiết phân tích từng level xem `references/sample-analysis.md`.
 
 ## Cảnh báo bảo mật dữ liệu
 
-> **🚫 KHÔNG ĐƯỢC GHI VÀO THƯ MỤC `rules/`** — `rules/question_sheet.csv`, `rules/topic.json`, `rules/jlpt_kanji.csv`, `rules/question_format.json`, `rules/mission.json` là file tham chiếu, chỉ đọc. Mọi dữ liệu gen phải ghi vào `sheets/samples_v1.csv`.
+> **🚫 KHÔNG ĐƯỢC GHI VÀO THƯ MỤC `rules/`** — `rules/question_sheet.csv`, `rules/topic.json`, `rules/jlpt_kanji.csv`, `rules/question_format.json`, `rules/mission.json`, `rules/rule_doc_hieu.md` là file tham chiếu, chỉ đọc. Mọi dữ liệu gen phải ghi vào `sheets/samples_v1.csv`.

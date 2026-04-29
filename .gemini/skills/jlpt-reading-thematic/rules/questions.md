@@ -90,6 +90,19 @@ Distractor **không được copy nguyên đoạn từ bài**:
 
 Quá giới hạn → distractor quá dễ hoặc đáp án đúng bị lộ vì copy.
 
+### R5.7 Văn phong câu hỏi (thể động từ) theo level — BẮT BUỘC
+
+Câu hỏi (`question_X`) và 4 lựa chọn (`answer_X`) phải dùng đúng **thể động từ** theo level:
+
+| Level | Thể bắt buộc | Đặc trưng kết câu |
+|-------|--------------|-------------------|
+| **N1, N2, N3** | **Thể thường** (普通体 / だ・である調) | `〜か。` / `〜のはどれか。` / `〜と考えられるか。` (KHÔNG dùng です/ます) |
+| **N4, N5** | **Thể ます** (です・ます調) | `〜ですか。` / `〜のはどれですか。` / `〜と思いますか。` |
+
+**Quy tắc cứng:**
+- Đọc hiểu chủ đề CHỈ có **N1 và N2** → cả 2 level đều dùng **thể thường**, KHÔNG được dùng です/ます
+- Câu hỏi và **cả 4 đáp án** phải nhất quán cùng thể (không trộn lẫn)
+
 ---
 
 ## R6. Định dạng câu trả lời & Explanation
@@ -135,35 +148,74 @@ answer_1 = "言語は思考を単純に決定するという立場\n言語は思
 
 Riêng câu cuối (thesis test), distractor nên dùng **Scope**, **Misinterpretation**, **Mixing** (gần thesis nhưng sai nuance/scope).
 
-### R6.3 Explanation format (3 phần BẮT BUỘC)
+### R6.3 Explanation format — 3 phần BẮT BUỘC (VN + EN)
 
-Mỗi câu hỏi có 2 cột: `explain_vn_X` (tiếng Việt) và `explain_en_X` (tiếng Anh). Mỗi explain **3 phần** rõ ràng:
+> **Explanation không chỉ "có nội dung" — nó phải CHỨNG MINH câu hỏi + đáp án đúng có logic.**
+> Đọc hiểu chủ đề là **editorial/critique 6-10 paragraph** với thesis rõ ràng. Explanation PHẢI **chỉ rõ paragraph**, trích cụ thể từ bài, đặc biệt cho câu cuối (thesis).
 
-#### Phần 1 — Đáp án đúng
-- Đáp án số mấy, trích dẫn **đoạn/câu** trong bài để support
-- Paraphrase lại ý đáp án nói gì (không copy cả cụm từ đáp án)
-- Cho câu cuối: trích **thesis statement** chính
+#### Phần 1 — Đáp án đúng (BẮT BUỘC trích bài + paragraph)
+- Nêu rõ "Đáp án đúng: (X)" + nội dung paraphrase
+- **Trích dẫn câu/đoạn cụ thể** trong bài (vd: "Paragraph 4 viết: `「...」`", "Câu cuối paragraph 7: `「...」`")
+- **Bắt buộc chỉ rõ paragraph số mấy** — bài dài 6-10 paragraph, không đủ để nói "trong bài"
+- Cho câu cuối (author_opinion / content_match): **trích thesis statement** từ paragraph mở đầu / kết / chuyển ý
+- Cho câu reference/meaning (có marker ①②): **trích cả câu chứa marker** + 1-2 câu trước/sau làm context
+- Nêu paraphrase: đáp án dùng từ đồng nghĩa nào với bài
 
-#### Phần 2 — Đáp án sai + bẫy
-- Từng đáp án sai (3 options còn lại), nêu rõ:
-  - Bẫy gì (Reversal / Scope / Mixing / ...)
-  - Vì sao sai (trái thesis / mở rộng sai / trộn 2 luận điểm)
+#### Phần 2 — Đáp án sai (TỪNG đáp án + loại bẫy)
+- Đi qua **TẤT CẢ 3 đáp án sai** (1 đáp án 1 dòng), không bỏ sót
+- Mỗi đáp án sai phải nêu:
+  1. **Loại bẫy** (Reversal / Detail swap / Scope / Misinterpretation / Part of truth / Mixing / Over-generalization)
+  2. **Trích cụ thể** từ bài chứng minh sai + **chỉ rõ paragraph** (vd: "Paragraph 2 phê phán X nhưng đáp án 3 nói X tốt → đảo ngược")
+- Câu cuối: distractor đặc thù **Scope** (hẹp hơn thesis) / **Mixing** (trộn 2 luận điểm) / **Misinterpretation** (sai nuance) — phải nêu rõ thesis chuẩn vs distractor sai ở đâu
+- KHÔNG dùng câu chung chung — phải chỉ rõ paragraph, ý nào trong bài đủ để bác bỏ
 
 #### Phần 3 — Tóm tắt chiến lược
-- 1-2 câu tổng kết: "Phải **tổng hợp toàn bài** / nhận diện **thesis** / loại trừ ý **cục bộ**..."
+- 1-2 câu: chiến lược giải dạng câu hỏi này (vd: "Câu cuối → trích thesis ở paragraph kết, loại trừ đáp án trái thesis / hẹp hơn / trộn ý")
 
-### R6.4 Ví dụ explain VN cho câu cuối (thesis)
+### R6.4 Ví dụ explain VN cho câu cuối (thesis) — BÀI N1 mẫu (8 paragraph)
 
+**Bài N1** (giả tưởng — 8 paragraph): Tác giả phê bình quan điểm "ngôn ngữ là vách giới hạn tư duy" (paragraph 1-2), phân tích cơ chế ngôn ngữ mở rộng qua phép ẩn dụ (paragraph 3-4), tái định nghĩa (paragraph 5), tiếp xúc đa văn hóa (paragraph 6-7), và kết luận (paragraph 8) rằng ngôn ngữ là "frontier" được mở rộng liên tục.
+
+**Question 3** (`question_author_opinion` — câu cuối):
+> この文章で筆者が最も主張したいことは何か。
+
+**Answers** (4 options, no prefix):
 ```
-Đáp án đúng: 2. Paragraph cuối tác giả kết luận "言語の限界とは、克服されるべき壁ではなく、絶えず押し広げられてゆくフロンティアなのである" — thesis tác giả là ngôn ngữ như 'fronteir' được mở rộng liên tục, không phải vách giới hạn.
-
-Đáp án sai:
-- 1. Reversal — đáp án 1 nói "ngôn ngữ quyết định hoàn toàn tư duy", trái thesis (tác giả phản đối determinism này ngay từ paragraph 2).
-- 3. Scope (too narrow) — chỉ nói tới "từ mới" nhưng thesis bao quát hơn: cả "phép ẩn dụ" + "tái định nghĩa" + "tiếp xúc đa văn hóa".
-- 4. Mixing — trộn ý "ngôn ngữ là công cụ giao tiếp" (paragraph 1) với "thể hiện cảm xúc" (không có trong bài) → trộn sai.
-
-→ Chiến lược: Câu cuối luôn TEST THESIS TỔNG THỂ. Phải trích câu kết luận cuối và loại trừ đáp án (a) trái thesis, (b) hẹp hơn thesis, (c) trộn 2 điểm.
+言語が思考を完全に決定するため、語彙の限界がそのまま思考の限界となる
+言語の限界は固定された壁ではなく、絶えず押し広げられていくものである
+語彙が新しく作られなければ、人間の思考は前進することができない
+言語は感情を伝える手段であり、文化的な背景に強く依存する
 ```
+
+**correct_answer**: 2
+
+**explain_vn**:
+```
+ĐÁP ÁN ĐÚNG (2): 言語の限界は固定された壁ではなく、絶えず押し広げられていくものである (Giới hạn ngôn ngữ không phải vách cố định mà là cái được mở rộng liên tục).
+Paragraph 8 (kết) viết: 「言語の限界とは、克服されるべき壁ではなく、絶えず押し広げられてゆくフロンティアなのである」 — thesis tác giả: ngôn ngữ là "frontier" được mở rộng, không phải vách giới hạn. Paragraph 3-7 đã xây dựng các cơ chế mở rộng (ẩn dụ, tái định nghĩa, đa văn hóa). Đáp án 2 paraphrase đúng thesis tổng thể.
+
+ĐÁP ÁN SAI:
+(1) 言語が思考を完全に決定する... — Reversal: Paragraph 2 viết 「言語決定論は素朴すぎる見解にすぎない」 — tác giả phản đối determinism này ngay từ đầu. Đáp án 1 đảo ngược thesis hoàn toàn.
+(3) 語彙が新しく作られなければ... — Scope (too narrow): Paragraph 5 có nói về "tạo từ mới" nhưng thesis bao quát hơn — gồm ẩn dụ (P3-4), tái định nghĩa (P5), đa văn hóa (P6-7). Đáp án 3 thu hẹp về 1 cơ chế.
+(4) 言語は感情を伝える手段... — Mixing/Scope: Paragraph 1 nhắc "ngôn ngữ là phương tiện giao tiếp" như giả thuyết khởi đầu, nhưng tác giả KHÔNG luận về "biểu đạt cảm xúc" hay "phụ thuộc văn hoá" trong bài. Trộn ý ngoài + bịa phạm vi.
+
+Tóm tắt: Câu cuối (author_opinion) → trích thesis paragraph kết (P8), so với options. Loại trừ: (a) đảo ngược thesis, (b) thu hẹp 1 cơ chế trong nhiều cơ chế, (c) trộn ý phụ + bịa phạm vi ngoài bài.
+```
+
+**explain_en**:
+```
+CORRECT ANSWER (2): 言語の限界は固定された壁ではなく、絶えず押し広げられていくものである (Language's limits are not a fixed wall but something continuously expanded).
+Paragraph 8 (conclusion) states: 「言語の限界とは、克服されるべき壁ではなく、絶えず押し広げられてゆくフロンティアなのである」 — author's thesis: language is a "frontier" that expands, not a fixed wall. Paragraphs 3-7 build the expansion mechanisms (metaphor, redefinition, multicultural contact). Option 2 correctly paraphrases the overall thesis.
+
+WRONG ANSWERS:
+(1) 言語が思考を完全に決定する... — Reversal: Paragraph 2 states 「言語決定論は素朴すぎる見解にすぎない」 — the author rejects determinism from the start. Option 1 fully reverses the thesis.
+(3) 語彙が新しく作られなければ... — Scope (too narrow): Paragraph 5 mentions "new word creation" but the thesis is broader — including metaphor (P3-4), redefinition (P5), multicultural contact (P6-7). Option 3 narrows to one mechanism.
+(4) 言語は感情を伝える手段... — Mixing/Scope: Paragraph 1 mentions "language as communication tool" as initial premise, but the author does NOT discuss "expressing emotion" or "cultural dependence" anywhere. Mixes a secondary premise with fabricated scope.
+
+Summary: Final author_opinion → quote thesis from closing paragraph (P8), compare to options. Eliminate (a) reversed thesis, (b) narrowed to one mechanism among many, (c) mixed secondary premise + fabricated scope.
+```
+
+**Explanation phải bằng cả 2 ngôn ngữ (VN + EN)** với cùng nội dung logic — không phải dịch máy.
 
 ### R6.5 Câu hỏi đặc thù đọc hiểu chủ đề
 

@@ -192,7 +192,7 @@ python3 <skill>/scripts/process_html.py --count-only --file <html-file>
 |--------|-------|------|
 | `_id` | `{LEVEL}_{uuid4().hex}` | vd `N1_a1b2c3d4...` |
 | `level` | `N1` hoặc `N2` | **CHỈ 2 level** |
-| `tag` | Topic tiếng Việt | từ `rules/topic.json` |
+| `tag` | Topic **tiếng Anh** | từ cột `en` của `rules/topic.json` (VD `journalism`, `technology`, `philosophy`) |
 | `jp_char_count` | `count_body_chars()` | str |
 | `kind` | `"đọc hiểu chủ đề"` | fixed |
 | `general_audio` | `""` | luôn empty |

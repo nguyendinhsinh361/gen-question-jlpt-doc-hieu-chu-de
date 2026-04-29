@@ -13,20 +13,20 @@
 
 ### Topic tag — BẮT BUỘC
 
-Tag chọn từ `rules/topic.json` — đọc hiểu chủ đề dùng **tiếng Việt** (khớp data mẫu & `smoke_test.csv`).
+Tag PHẢI bằng **tiếng Anh** — chọn từ cột `en` của `rules/topic.json` (catalog 287 topics, 13 category). Tham khảo `rules/rule_doc_hieu.md` (rule chung của giáo viên cho TOÀN BỘ phần đọc hiểu) để chọn topic phù hợp level. Category gợi ý theo level:
 
-| Category | Ví dụ tag (vi) | Phù hợp level |
+| Category | Ví dụ tag (en) | Phù hợp level |
 |----------|----------------|---------------|
-| Xã luận / phê bình cao cấp | `xã luận báo chí`, `phê bình xã hội`, `phê bình văn hóa`, `phê bình văn học` | **N1** (phổ biến), N2 (nhẹ hơn) |
-| Công nghệ / khoa học | `phê bình công nghệ`, `xã hội số`, `AI và đời sống`, `khoa học đại chúng` | N1, N2 |
-| Giáo dục / ngôn ngữ | `triết học giáo dục`, `ngôn ngữ và xã hội`, `cải cách giáo dục`, `ngôn ngữ` | N1, N2 |
-| Kinh tế / chính sách | `kinh tế tiêu dùng`, `chính sách xã hội`, `môi trường`, `kinh tế` | **N1** |
-| Văn hóa đời sống | `văn hóa ăn uống`, `lối sống hiện đại`, `gia đình hiện đại`, `thế hệ trẻ` | **N2** (phổ biến) |
-| Triết học / nhân học | `bản chất con người`, `đạo đức`, `tự do và trách nhiệm`, `triết học` | **N1** |
-| Tâm lý / nhận thức | `tâm lý học`, `khoa học nhận thức`, `cognitive`, `tư duy` | **N1** |
+| Editorial / social criticism | `journalism`, `social criticism`, `cultural criticism`, `literary criticism` | **N1** (phổ biến), N2 (nhẹ hơn) |
+| Science & Technology | `technology`, `digital society`, `artificial intelligence`, `popular science` | N1, N2 |
+| Education & Language | `education`, `language`, `educational reform`, `language and society` | N1, N2 |
+| Economics & Policy | `economics`, `consumption`, `policy`, `environment` | **N1** |
+| Culture & Daily Life | `culture`, `lifestyle`, `family`, `youth` | **N2** (phổ biến) |
+| Philosophy & Ethics | `philosophy`, `ethics`, `human nature`, `freedom` | **N1** |
+| Psychology & Cognition | `psychology`, `cognition`, `mindset`, `perception` | **N1** |
 
-> **⚠️ KHÔNG dùng tag tiếng Anh hoặc tiếng Nhật.**
-> Phải dùng tiếng Việt đúng cột `vi` của `rules/topic.json` (ví dụ: ✅ `xã luận báo chí`, `phê bình công nghệ`, `triết học`).
+> **⚠️ KHÔNG dùng tag tiếng Việt hoặc tiếng Nhật. TUYỆT ĐỐI tiếng Anh.**
+> Phải dùng tiếng Anh slug đúng cột `en` của `rules/topic.json` (✅ `journalism`, `technology`, `philosophy`).
 
 Trong batch ≥ 3 bài, chọn topic từ ≥ 2 category khác nhau để đa dạng.
 
