@@ -85,7 +85,7 @@ description: >
 
 1. **Đọc `rules/rule_doc_hieu.md`** — **rule chung của giáo viên tiếng Nhật cho TOÀN BỘ phần đọc hiểu** (source-of-truth cho từ vựng/ngữ pháp theo level, kỹ thuật ra câu hỏi, distractor traps). Section 3-5 áp dụng trực tiếp. Section 1-2 (chủ đề + form) chủ yếu cho "tìm thông tin" — tham khảo tinh thần, áp dụng linh hoạt cho prose reading.
 2. **Đọc rules skill**: `rules/content.md` + `rules/vocabulary.md` + `rules/technical.md` + `rules/questions.md`
-3. **Đọc `rules/jlpt_kanji.csv`** — dùng để tra level từng kanji khi quyết định furigana
+3. **Đọc `rules/kanji_simplified.csv`** — dùng để tra level từng kanji khi quyết định furigana
 4. **Scan `sheets/samples_v1.csv` và `data/doc_hieu_chu_de_n{1,2}_clean.json`** — xem format, topic đã dùng → chọn format chưa/ít dùng
 5. **Load 2-3 sample calibrate style**:
    ```bash
@@ -119,7 +119,7 @@ description: >
    - `<p>` thuần, KHÔNG `<br>` giữa câu (đọc hiểu chủ đề KHÔNG có exception)
    - **Paragraph count**: N1 = 6-10, N2 = 5-8 (mỗi `<p>` = 1 bước logic)
    - Marker ①② chỉ cho câu 1/2 reference/meaning; **câu cuối KHÔNG marker**
-   - Furigana chỉ cho từ vượt level (tra `rules/jlpt_kanji.csv`) — data 0-9% nên giữ ít
+   - Furigana chỉ cho từ vượt level (tra `rules/kanji_simplified.csv`) — data 0-9% nên giữ ít
    - **Source line**: N1 rất nên có (data 64%), N2 optional (data 26%)
    - **Annotation 注**: N1 rất nên có (data 60%, 1-2 cái), N2 nên có (51%, 1-2 cái)
    - **`(中略)` ellipsis**: optional, 1 lần/bài, giữa 2 đoạn logic chính (data N1=28%, N2=19%)
@@ -207,7 +207,7 @@ Agent đọc lại file HTML và kiểm tra:
 | 15 | **Thesis rõ ràng** | Đọc toàn bài | Có thể tóm tắt thesis trong 1-2 câu; thesis xuất hiện rõ ít nhất 1 chỗ (mở đầu, giữa, hoặc cuối) |
 | 16 | **Không mơ hồ (test 2 cách hiểu)** | Đọc từng câu, thử hiểu theo cách 2 | Chỉ có DUY NHẤT 1 cách hiểu hợp lý cho từng câu hỏi |
 | 17 | **Từ vựng đúng level** | Đọc từng từ, đối chiếu R3 | Key terms ≤ level, không dùng ngữ pháp vượt level. N1 văn luận thuyết cao cấp (`～にほかならない`/`～ざるを得ない`). N2 formal trung cấp |
-| 18 | **Furigana đúng từ (tra CSV)** | Tra từng kanji trong `rules/jlpt_kanji.csv` | Mọi từ có kanji vượt level đều có `<ruby><rt>`. Không thừa furigana cho từ đúng level. Không dạng "Ab" (媒たい) |
+| 18 | **Furigana đúng từ (tra CSV)** | Tra từng kanji trong `rules/kanji_simplified.csv` | Mọi từ có kanji vượt level đều có `<ruby><rt>`. Không thừa furigana cho từ đúng level. Không dạng "Ab" (媒たい) |
 
 #### PHẦN C: CÂU HỎI & ĐÁP ÁN (11 checks — áp dụng cho TỪNG câu hỏi)
 
@@ -270,7 +270,7 @@ Agent đọc TOÀN BỘ câu hỏi + 4 đáp án từ CSV và đánh giá từng
 | #9, #10, #11 (ruby/visual) | Sửa ruby tags hoặc thêm marker/source/annotation theo level | Chạy `--refresh` → QC lại |
 | #12 (`(中略)` abuse) | Bỏ bớt `(中略)` (tối đa 1 lần) hoặc di chuyển vào giữa bài | Chạy `--refresh` → QC lại |
 | #13-#17 | Gen lại nội dung (giữ _id): đảm bảo editorial + thesis + từ vựng level | Chạy `--refresh` → QC lại |
-| #18 (furigana tra CSV) | Sửa ruby tags (tra lại `rules/jlpt_kanji.csv`) | Chạy `--refresh` → QC lại |
+| #18 (furigana tra CSV) | Sửa ruby tags (tra lại `rules/kanji_simplified.csv`) | Chạy `--refresh` → QC lại |
 | #19 (số câu hỏi) | Thêm/xóa câu bằng `fill_qa.py` để đúng 3 slot | QC lại |
 | #20, #21 (labels) | Sửa label trong `fill_qa.py` (dùng đủ `question_` prefix + đa dạng) | QC lại |
 | #22 (câu cuối label) | Sửa câu cuối = `question_author_opinion` hoặc `question_content_match` (cả 2 level) | QC lại |
@@ -438,4 +438,4 @@ Chi tiết phân tích từng level xem `references/sample-analysis.md`.
 
 ## Cảnh báo bảo mật dữ liệu
 
-> **🚫 KHÔNG ĐƯỢC GHI VÀO THƯ MỤC `rules/`** — `rules/question_sheet.csv`, `rules/topic.json`, `rules/jlpt_kanji.csv`, `rules/question_format.json`, `rules/mission.json`, `rules/rule_doc_hieu.md` là file tham chiếu, chỉ đọc. Mọi dữ liệu gen phải ghi vào `sheets/samples_v1.csv`.
+> **🚫 KHÔNG ĐƯỢC GHI VÀO THƯ MỤC `rules/`** — `rules/question_sheet.csv`, `rules/topic.json`, `rules/kanji_simplified.csv`, `rules/question_format.json`, `rules/mission.json`, `rules/rule_doc_hieu.md` là file tham chiếu, chỉ đọc. Mọi dữ liệu gen phải ghi vào `sheets/samples_v1.csv`.
