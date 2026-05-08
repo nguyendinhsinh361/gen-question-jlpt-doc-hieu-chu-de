@@ -135,18 +135,31 @@ answer_1 = "言語は思考を単純に決定するという立場\n言語は思
 
 > **CHÚ Ý**: Data gốc JSON dùng `correctAnswer` 0-based. Khi convert sang CSV phải **+1** để thành 1-based.
 
-### R6.2 Distractor trap types
+### ⛔ Phân loại bẫy đáp án — 7 loại tổng (5 chuẩn + bẫy có điều kiện)
 
-Đọc hiểu chủ đề yêu cầu distractor **tinh vi nhất** trong series vì văn abstract. 6 trap type:
+> **Nguồn**: rule_doc_hieu.md Phần 5 (5.1–5.7). Áp dụng cho dạng này: **N1 + N2**.
+>
+> **Quy tắc:** Trong 4 đáp án (1 đúng + 3 sai), 3 distractor PHẢI dùng **≥ 3 loại bẫy khác nhau** từ bảng dưới. Mỗi distractor phải dùng info/ý THẬT từ bài (trừ Fabrication có thể bịa cận-context).
 
-1. **Reversal** — đáp án ngược với thesis/luận điểm bài
-2. **Detail swap** — đổi chủ ngữ/đối tượng/quan hệ giữa các luận điểm
-3. **Scope** — mở rộng (over-generalization) hoặc thu hẹp (too-narrow) so với thesis
-4. **Misinterpretation** — hiểu sai sắc thái mệnh đề phụ (vd `としても` → `だから`)
-5. **Part of truth** — chỉ đúng 1 bước luận điểm, không đúng toàn bài / thesis
-6. **Mixing** — trộn 2 luận điểm thành 1 ý sai (đặc trưng thematic vì bài nhiều luận điểm)
+| Loại bẫy | Mô tả | Ví dụ |
+|----------|-------|-------|
+| **① Reversal** ❌ | Đảo ngược ý nghĩa, kết luận, quan hệ nhân-quả từ bài | Bài: 「Aによって元気になった」 → Bẫy: 「Aの後で体が重くなった」 (đảo ngược) |
+| **② Detail Swap** 🔄 | Dùng thông tin đúng nhưng gán sai ngữ cảnh (sai đối tượng/thời điểm/địa điểm) | Bài: 「Aは嵐山, Bは金閣寺」 → Bẫy: 「Aは金閣寺」 (đúng chi tiết, sai ngữ cảnh) |
+| **③ Fabrication** 🎭 | Thêm thông tin hoàn toàn KHÔNG CÓ trong bài | Bài không nói X → Bẫy: 「XだからY」 — không kiểm chứng được |
+| **④ Scope** 📐 | Đáp án quá RỘNG (over-generalization) hoặc quá HẸP so với ý bài | Bài: 「金閣寺で写真」 → Bẫy rộng: 「京都で写真」 / Bẫy hẹp: 「池のそばで写真」 |
+| **⑤ Mixing** 🧩 | Kết hợp 2 thông tin đúng riêng lẻ thành ý sai (không tồn tại trong bài) | A đúng + B đúng nhưng không liên quan → Bẫy: 「AだからB」 |
+| **⑦ Peripheral Source** 📎 | Đáp án lấy nội dung từ **chú thích 注 hoặc trích dẫn (による)** thay vì luận điểm chính của tác giả | Bài có 注 giải thích khái niệm triết học; Bẫy dùng định nghĩa đó làm câu trả lời cho câu thesis. Phân biệt với Fabrication: thông tin có trong bài (từ 注), nhưng KHÔNG phải lập luận tác giả. |
 
-Riêng câu cuối (thesis test), distractor nên dùng **Scope**, **Misinterpretation**, **Mixing** (gần thesis nhưng sai nuance/scope).
+**📊 Phân bổ thực tế per level (từ data đề thi):**
+- **N5–N4**: Reversal (cảm xúc/hành động) + Detail Swap đơn giản + Fabrication thông tin ngoài bài
+- **N3**: Detail Swap (hoán đổi nhân vật/thời điểm) + Mixing (trộn lý do) + Fabrication tinh tế hơn
+- **N2**: Scope (quá rộng/hẹp) + Reversal logic (concede trap: ý nhượng bộ vs ý chính) + Mixing (evidence + opinion)
+- **N1**: Peripheral Source (nếu 注 dài) + Reversal sâu (premise vs conclusion) + Scope cực tinh tế (1 từ điều kiện) + Mixing phức tạp (2+ bước lập luận)
+
+> **Áp dụng:** 5 loại chuẩn áp dụng cho cả N1 và N2. Peripheral Source ĐẶC BIỆT phổ biến ở N1 主張 (data 75–80% bài có 注 dài).
+
+> **🔍 Peripheral Source — RẤT phổ biến ở N1 主張**: Data N1 主張 có 注 ở 75–80% bài, thường dài và chi tiết về thuật ngữ triết học. Distractor có thể lấy định nghĩa từ 注 làm câu trả lời cho câu hỏi về thesis. BẮT BUỘC self-check: distractor có lấy info từ 注 không? Nếu có và câu hỏi không phải về 注, đó là Peripheral Source — KHÔNG phải đáp án đúng.
+
 
 ### R6.3 Explanation format — 3 phần BẮT BUỘC (VN + EN)
 
