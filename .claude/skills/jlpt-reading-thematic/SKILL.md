@@ -48,6 +48,9 @@ description: >
 | `scripts/fill_qa.py` | Điền Q&A vào CSV (quote an toàn, 3 câu, tail label rule) | Sau khi gen Q&A |
 | `scripts/load_references.py` | Load sample JSON để calibrate | BƯỚC 0 chuẩn bị |
 | `scripts/check_furigana.py` | Auto-check furigana coverage vs `kanji_jlpt_sensei.csv` | BƯỚC 1 sau gen HTML + QC |
+| `scripts/check_csv_fields.py` | Auto-check required CSV fields (`_id`, `level`, `tag`, `kind`, `question_label_*`, Q slots) | BƯỚC 1 sau khi tạo CSV + QC |
+| `scripts/check_spacing.py` | Auto-check わかち書き spacing (N5 BẮT BUỘC có khoảng trắng, N1-N4 BẮT BUỘC không có) | BƯỚC 1 sau gen HTML + QC |
+| `scripts/check_answer_punctuation.py` | Auto-check dấu `。` cuối lựa chọn (Phần 5.8): câu hoàn chỉnh → cần `。`; mệnh đề phụ/kanji-noun → không `。`; nhất quán trong 1 Q | BƯỚC 1 sau khi tạo CSV + QC |
 
 ## Outputs Per Passage
 
@@ -91,6 +94,9 @@ description: >
    - Phần 1 (Tổng quan & Nguyên tắc 程度) — biên ± per level; có thể trích nguồn thực + ghi `（著者名「タイトル」による）`; (中略) cho phép
    - Phần 2 (Hình thức) — ①② thường có, 注 bắt buộc
    - **Phần 2.4 (Thể chia nhất quán 文体の統一)** — N1/N2 dùng **普通形** (だ・である). Văn bản editorial + câu hỏi + 4 đáp án phải **thống nhất thể** — toàn bộ 普通形 cho dạng 主張理解.
+   - **Phần 2.5 (Khoảng cách わかち書き)** — Chỉ N5 dùng. N5 BẮT BUỘC dùng **全角スペース (U+3000)**, CẤM 半角スペース (U+0020). N4-N1 KHÔNG dùng wakachi-gaki.
+   - **Phần 3 (Furigana — Quy tắc A/B/C)** — A: bắt buộc `<ruby>` tag; B: rắc toàn từ, KHÔNG rắc 1 phần (vd: `<ruby>確証<rt>かくしょう</rt></ruby>` chứ KHÔNG `確<ruby>証<rt>しょう</rt></ruby>`); C: chỉ lần đầu xuất hiện, kể cả 注.
+   - **Phần 5.8 (Dấu `。` cuối lựa chọn)** — Câu hoàn chỉnh (kết bằng である/だ/です/べきだ) → cần `。`. Mệnh đề phụ (kết bằng から/ため/ので) hoặc danh từ kanji-ending → KHÔNG `。`. 4 options trong 1 Q phải nhất quán.
    - Phần 3 (Furigana) — bảng quy tắc per level
    - Phần 4 (8 loại câu hỏi) — đặc biệt **author_opinion** (BẮT BUỘC câu cuối), reference, reason_explanation, fill_in_the_blank, meaning_interpretation (N1)
    - Phần 5 (7 loại bẫy = 5 chuẩn + Single-side + Peripheral Source) — đặc biệt Reversal/Scope/Mixing/Misinterpretation cho câu thesis
@@ -201,9 +207,11 @@ Trước khi sang BƯỚC 2 (QC), agent PHẢI confirm:
 - [ ] Tất cả Q + 4 đáp án + correct_answer + explain_vn + explain_en đã fill (không "TODO", không empty)
 - [ ] Đã đọc lại file HTML vừa gen (mở file, đọc content) — KHÔNG dựa vào "tôi nhớ tôi đã gen"
 - [ ] **Đã chạy `check_furigana.py --file ... --level ... --csv rules/kanji_jlpt_sensei.csv` và KHÔNG có `MISSING FURIGANA`** — auto-check bắt buộc, log output
+- [ ] **Đã chạy `check_csv_fields.py --csv sheets/samples_v1.csv --kind thematic` và row mới `ALL ROWS VALID`** — auto-check required fields (`_id`, `level`, `tag`, `kind`, `question_label_*`, Q slots)
+- [ ] **Đã chạy `check_spacing.py --file ... --level ...` và spacing OK** — N5 BẮT BUỘC わかち書き (ratio ≥ 3%), N1-N4 BẮT BUỘC không có space giữa kanji/kana (ratio ≤ 0.5%)
 
 ❌ Bất kỳ item nào CHƯA confirm → quay lại BƯỚC 1 fix, KHÔNG được QC.
-✅ Khi 6/6 tick → log `GATE 1→2 PASSED — ready to QC` rồi sang BƯỚC 2.
+✅ Khi 8/8 tick → log `GATE 1→2 PASSED — ready to QC` rồi sang BƯỚC 2.
 
 ---
 
@@ -247,7 +255,20 @@ Trước khi vào BƯỚC 3 (đánh giá 33 mục checklist), agent PHẢI cam k
 ### BƯỚC 3: ⛔ CHECKLIST — TẤT CẢ PHẢI PASS
 
 > **Quy tắc: 1 FAIL = chưa xong. Sửa → QC lại từ đầu → lặp đến khi ALL PASS.**
-> **Tổng: 33 checks ở 4 phần (A HTML 12, B content 6, C questions/answers + C2 verify 11, D multi-question coverage 4).**
+> **Tổng: 37 checks (33 manual + 4 auto-script) ở 4 phần (A HTML 12, B content 6, C questions/answers + C2 verify 11, D multi-question coverage 4).**
+
+#### PHẦN 0: AUTO-CHECK SCRIPTS — 3 checks BẮT BUỘC chạy đầu tiên
+
+> **🔒 BẮT BUỘC chạy 3 script trước khi đánh giá manual checklist.** Nếu BẤT KỲ script nào FAIL → quay lại BƯỚC 4 sửa, KHÔNG đánh giá tiếp các mục manual.
+
+| # | Check | Cách verify | PASS nếu |
+|---|-------|-------------|----------|
+| 0a | **Auto furigana** | `python3 .claude/skills/jlpt-reading-thematic/scripts/check_furigana.py --file assets/html/doc_hieu_chu_de/<file>.html --level <LEVEL> --csv rules/kanji_jlpt_sensei.csv` | Exit code 0. Output KHÔNG có `MISSING FURIGANA`. (Auto-detect kanji vượt level thiếu ruby) |
+| 0b | **Auto CSV fields** | `python3 .claude/skills/jlpt-reading-thematic/scripts/check_csv_fields.py --csv sheets/samples_v1.csv --kind thematic` | Exit code 0. Output `ALL ROWS VALID`. (Auto-check `_id`, `level`, `tag`, `kind`, `question_label_*`, Q slots đầy đủ) |
+| 0c | **Auto spacing** | `python3 .claude/skills/jlpt-reading-thematic/scripts/check_spacing.py --file assets/html/doc_hieu_chu_de/<file>.html --level <LEVEL>` | Exit code 0. Status `OK`. (N5 BẮT BUỘC わかち書き ratio ≥ 3%; N1-N4 BẮT BUỘC ratio ≤ 0.5%) |
+| 0d | **Auto answer 。** | `python3 .claude/skills/jlpt-reading-thematic/scripts/check_answer_punctuation.py --csv sheets/samples_v1.csv` | Exit code 0. Output `ALL ROWS VALID`. (Phần 5.8: câu hoàn chỉnh → cần `。`; mệnh đề từ / kanji-noun → không `。`; nhất quán trong 1 Q) |
+
+> **CẤM bỏ qua 3 mục này** — đây là enforce mạnh nhất. Auto-scripts không thể đoán → phải pass thực sự.
 
 #### PHẦN A: HTML (12 checks)
 
@@ -351,6 +372,10 @@ Sau khi đánh giá 33 mục, agent PHẢI confirm trước khi vào fix loop:
 
 | Nếu FAIL | Hành động | Sau đó |
 |-----------|-----------|--------|
+| #0a (auto furigana FAIL) | Đọc output check_furigana.py: thêm `<ruby><rt>` cho mỗi kanji bị MISSING; bỏ ruby thừa cho REDUNDANT | Chạy lại `check_furigana.py` → QC lại |
+| #0b (auto CSV fields FAIL) | Đọc output check_csv_fields.py: fix từng field bị MISSING bằng `fill_qa.py` (KHÔNG sửa CSV tay) | Chạy lại `check_csv_fields.py` → QC lại |
+| #0c (auto spacing FAIL) | N5 MISSING_WAKACHI: thêm khoảng trắng giữa cụm từ. N1-N4 UNEXPECTED_WAKACHI: bỏ khoảng trắng giữa kanji/kana | Chạy lại `check_spacing.py` → `--refresh` CSV → QC lại |
+| #0d (auto answer 。 FAIL) | Đọc output check_answer_punctuation.py: câu hoàn chỉnh thiếu `。` → thêm; mệnh đề/kanji-noun có `。` → bỏ; mix style → đồng bộ 4 options | Chạy lại `check_answer_punctuation.py` → QC lại |
 | #1 (scope level) | Level sai → REJECT, không gen lại — đọc hiểu chủ đề chỉ có N1/N2 | Không tiếp tục |
 | #2, #3 (chars) | Bổ sung/cắt nội dung. Nếu Hard Reject → gen lại hoàn toàn | Chạy `--refresh` → QC lại |
 | #4 (flow text) | Sửa `<br>` → `</p><p>` | Chạy `--refresh` → QC lại |
@@ -399,8 +424,8 @@ python3 .claude/skills/jlpt-reading-thematic/scripts/process_html.py \
 
 Trước khi log "ALL PASSED", agent PHẢI confirm:
 
-- [ ] Đã chạy QC checklist 33 mục TRỌN VẸN ở vòng cuối (không skip)
-- [ ] **TẤT CẢ 33/33 mục đều PASS** (không có FAIL nào, không có "skip", không có "n/a")
+- [ ] Đã chạy QC checklist 37 mục TRỌN VẸN (gồm 4 auto-script + 33 manual) ở vòng cuối (không skip)
+- [ ] **TẤT CẢ 37/37 mục đều PASS** — bao gồm 4 auto-script đều exit 0 (không có FAIL nào, không có "skip", không có "n/a")
 - [ ] Nếu có sửa HTML trong loop → đã chạy `process_html.py --refresh` để sync CSV
 - [ ] Đã chạy `process_html.py --validate` cho file hiện tại — KHÔNG có broken ruby trong cả HTML lẫn CSV
 - [ ] Self-solve thực sự thực hiện: agent tự giải bài + chọn đáp án mà không nhìn correct_answer → KHỚP
@@ -412,9 +437,9 @@ Trước khi log "ALL PASSED", agent PHẢI confirm:
 
 ### BƯỚC 5: ✅ HOÀN THÀNH → BÀI TIẾP THEO
 
-Chỉ khi **TẤT CẢ 33 checks PASS + GATE 4→5 PASSED** → log:
+Chỉ khi **TẤT CẢ 36 checks PASS + GATE 4→5 PASSED** → log:
 ```
-🎉 ALL PASSED (33/33) — {_id} hoàn thành — 3 câu hỏi ({labels})
+🎉 ALL PASSED (37/37) — {_id} hoàn thành — 3 câu hỏi ({labels})
 GATE 4→5 PASSED — bài này hoàn tất, sang bài tiếp.
 ```
 → Chuyển sang bài tiếp theo (quay lại GATE 0→1 nếu là bài đầu batch, hoặc BƯỚC 1 nếu cùng batch).
@@ -436,6 +461,19 @@ python3 .claude/skills/jlpt-reading-thematic/scripts/process_html.py \
 python3 .claude/skills/jlpt-reading-thematic/scripts/check_furigana.py \
   --html-dir assets/html/doc_hieu_chu_de \
   --csv rules/kanji_jlpt_sensei.csv
+
+# 1c. Auto-check required CSV fields cho TẤT CẢ rows
+python3 .claude/skills/jlpt-reading-thematic/scripts/check_csv_fields.py \
+  --csv sheets/samples_v1.csv \
+  --kind thematic
+
+# 1e. Auto-check dấu `。` cuối lựa chọn cho TẤT CẢ rows
+python3 .claude/skills/jlpt-reading-thematic/scripts/check_answer_punctuation.py \
+  --csv sheets/samples_v1.csv
+
+# 1d. Auto-check わかち書き spacing cho TẤT CẢ file HTML
+python3 .claude/skills/jlpt-reading-thematic/scripts/check_spacing.py \
+  --html-dir assets/html/doc_hieu_chu_de
 
 # 2. Đếm số rows trong CSV + check số câu hỏi + last-label rule
 python3 -c "
